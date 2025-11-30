@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClipX by Wan - Download Video Gratis</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        .container { width: 100%; max-width: 400px; }
+        .glass-card { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(20px); border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.2); padding: 40px 30px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1); text-align: center; }
+        .brand-name { font-size: 42px; font-weight: 800; color: white; margin-bottom: 5px; }
+        .by-wan { font-size: 16px; color: rgba(255, 255, 255, 0.8); margin-bottom: 20px; }
+        .tagline { font-size: 14px; color: rgba(255, 255, 255, 0.9); line-height: 1.5; margin-bottom: 30px; }
+        .platforms { display: flex; justify-content: center; gap: 20px; margin: 20px 0; color: rgba(255, 255, 255, 0.8); font-size: 12px; }
+        .url-input { width: 100%; padding: 15px; border: none; border-radius: 12px; background: rgba(255, 255, 255, 0.15); color: white; font-size: 14px; margin-bottom: 15px; border: 1px solid rgba(255, 255, 255, 0.1); }
+        .url-input::placeholder { color: rgba(255, 255, 255, 0.6); }
+        .download-btn { width: 100%; padding: 15px; border: none; border-radius: 12px; background: rgba(255, 255, 255, 0.2); color: white; font-size: 16px; font-weight: 600; cursor: pointer; border: 1px solid rgba(255, 255, 255, 0.2); }
+        .download-btn:hover { background: rgba(255, 255, 255, 0.3); }
+        .result-section { display: none; margin-top: 20px; }
+        .quality-options { display: flex; gap: 10px; margin: 15px 0; justify-content: center; }
+        .quality-btn { padding: 8px 16px; border: 1px solid rgba(255, 255, 255, 0.3); background: rgba(255, 255, 255, 0.1); color: white; border-radius: 8px; cursor: pointer; font-size: 12px; }
+        .final-download { display: block; padding: 12px; background: rgba(255, 255, 255, 0.2); color: white; text-decoration: none; border-radius: 10px; font-weight: 600; }
+        .loading { display: none; margin: 20px 0; }
+        .spinner { border: 3px solid rgba(255, 255, 255, 0.1); border-left: 3px solid white; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 0 auto 10px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .error { display: none; background: rgba(231, 76, 60, 0.2); color: white; padding: 12px; border-radius: 10px; margin: 15px 0; border: 1px solid rgba(231, 76, 60, 0.3); }
+        .footer { margin-top: 30px; color: rgba(255, 255, 255, 0.6); font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="glass-card">
+            <h1 class="brand-name">ClipX</h1>
+            <div class="by-wan">by Wan</div>
+            <div class="tagline">Download video dari Instagram, TikTok, dan Facebook dengan kualitas terbaik</div>
+            <div class="platforms">
+                <span>Instagram</span>
+                <span>TikTok</span>
+                <span>Facebook</span>
+            </div>
+            <input type="text" class="url-input" id="urlInput" placeholder="Tempel link video disini...">
+            <button class="download-btn" id="downloadBtn">Download</button>
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <div>Memproses video...</div>
+            </div>
+            <div class="error" id="error"></div>
+            <div class="result-section" id="resultSection">
+                <div>Video Siap Diunduh</div>
+                <div class="quality-options" id="qualityOptions"></div>
+                <a href="#" class="final-download" id="downloadLink" download>Download Video</a>
+            </div>
+            <div class="footer">© 2023 ClipX by Wan. All rights reserved.</div>
+        </div>
+    </div>
+    <script>
+        document.getElementById('downloadBtn').addEventListener('click', function() {
+            const url = document.getElementById('urlInput').value;
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+            const resultSection = document.getElementById('resultSection');
+            
+            if (!url) {
+                error.textContent = 'Silakan tempel link video terlebih dahulu';
+                error.style.display = 'block';
+                return;
+            }
+            
+            loading.style.display = 'block';
+            error.style.display = 'none';
+            
+            // Simulasi proses download
+            setTimeout(() => {
+                loading.style.display = 'none';
+                resultSection.style.display = 'block';
+                document.getElementById('downloadLink').href = 'https://example.com/video.mp4';
+            }, 2000);
+        });
+    </script>
+</body>
+              </html>
