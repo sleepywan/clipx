@@ -136,6 +136,10 @@
             font-weight: 500;
         }
 
+        .download-section {
+            transition: all 0.3s ease;
+        }
+
         .url-input {
             width: 100%;
             padding: 18px 22px;
@@ -215,6 +219,34 @@
             box-shadow: none;
         }
 
+        .loading {
+            display: none;
+            margin: 40px 0;
+            text-align: center;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-left: 4px solid #667eea;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 18px;
+            font-weight: 500;
+        }
+
         .result-section {
             display: none;
             animation: fadeIn 0.5s ease;
@@ -273,6 +305,27 @@
                 0 15px 35px rgba(0, 210, 106, 0.5),
                 0 2px 0 rgba(255, 255, 255, 0.1);
             background: linear-gradient(135deg, #00c060 0%, #00a850 100%);
+        }
+
+        .back-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(20px);
+            margin-top: 15px;
+            cursor: pointer;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
         }
 
         .error {
@@ -347,9 +400,14 @@
                 <span>TikTok Downloader</span>
             </div>
 
-            <div class="download-section">
+            <div class="download-section" id="downloadSection">
                 <input type="text" class="url-input" id="urlInput" placeholder="Tempel link TikTok disini...">
                 <button class="download-btn" id="downloadBtn">Download Video TikTok</button>
+            </div>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <div class="loading-text">Memproses video TikTok...</div>
             </div>
 
             <div class="error" id="error">
@@ -359,6 +417,7 @@
             <div class="result-section" id="resultSection">
                 <div class="result-title">Video TikTok Siap Diunduh</div>
                 <a href="#" class="final-download" id="downloadLink" download>Download Video TikTok</a>
+                <button class="back-btn" id="backBtn">Download Video Lain</button>
             </div>
 
             <div class="footer">
@@ -371,10 +430,13 @@
     <script>
         const urlInput = document.getElementById('urlInput');
         const downloadBtn = document.getElementById('downloadBtn');
+        const downloadSection = document.getElementById('downloadSection');
+        const loading = document.getElementById('loading');
         const error = document.getElementById('error');
         const errorText = document.getElementById('errorText');
         const resultSection = document.getElementById('resultSection');
         const downloadLink = document.getElementById('downloadLink');
+        const backBtn = document.getElementById('backBtn');
 
         function showError(message) {
             errorText.textContent = message;
@@ -383,6 +445,29 @@
 
         function hideError() {
             error.style.display = 'none';
+        }
+
+        function showLoading() {
+            downloadSection.style.display = 'none';
+            loading.style.display = 'block';
+            resultSection.style.display = 'none';
+            hideError();
+        }
+
+        function showResult() {
+            downloadSection.style.display = 'none';
+            loading.style.display = 'none';
+            resultSection.style.display = 'block';
+            hideError();
+        }
+
+        function resetToHome() {
+            downloadSection.style.display = 'block';
+            loading.style.display = 'none';
+            resultSection.style.display = 'none';
+            hideError();
+            urlInput.value = '';
+            urlInput.focus();
         }
 
         function isValidTikTokURL(url) {
@@ -397,10 +482,6 @@
         async function processVideo() {
             const url = urlInput.value.trim();
             
-            // Reset UI
-            resultSection.style.display = 'none';
-            hideError();
-            
             if (!url) {
                 showError('Silakan tempel link TikTok terlebih dahulu');
                 return;
@@ -411,9 +492,9 @@
                 return;
             }
 
-            // Langsung proses tanpa loading
+            // Tampilkan loading
+            showLoading();
             downloadBtn.disabled = true;
-            downloadBtn.textContent = 'Memproses...';
 
             try {
                 // TIKTOK - PAKAI API LANGSUNG
@@ -423,10 +504,13 @@
                 if (response.ok) {
                     const data = await response.json();
                     if (data.data && data.data.play) {
-                        // Langsung tampilkan hasil
-                        resultSection.style.display = 'block';
+                        // Simulasi loading 1.5 detik untuk efek yang lebih smooth
+                        await new Promise(resolve => setTimeout(resolve, 1500));
+                        
+                        // Tampilkan hasil
                         downloadLink.href = data.data.play;
                         downloadLink.download = 'tiktok_video.mp4';
+                        showResult();
                     } else {
                         throw new Error('Video TikTok tidak ditemukan');
                     }
@@ -436,16 +520,17 @@
 
             } catch (err) {
                 console.error(err);
+                // Kembali ke home dan tampilkan error
+                resetToHome();
                 showError('Terjadi kesalahan: ' + err.message);
             } finally {
-                // Reset button state
                 downloadBtn.disabled = false;
-                downloadBtn.textContent = 'Download Video TikTok';
             }
         }
 
         // Event listeners
         downloadBtn.addEventListener('click', processVideo);
+        backBtn.addEventListener('click', resetToHome);
         
         // Allow pressing Enter to trigger download
         urlInput.addEventListener('keypress', function(e) {
