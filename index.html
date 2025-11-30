@@ -275,32 +275,6 @@
             background: linear-gradient(135deg, #00c060 0%, #00a850 100%);
         }
 
-        .loading {
-            display: none;
-            margin: 25px 0;
-        }
-
-        .spinner {
-            border: 4px solid rgba(255, 255, 255, 0.1);
-            border-left: 4px solid #667eea;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 15px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .loading-text {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 16px;
-            font-weight: 500;
-        }
-
         .error {
             display: none;
             background: rgba(231, 76, 60, 0.15);
@@ -309,18 +283,6 @@
             border-radius: 14px;
             margin: 20px 0;
             border: 1px solid rgba(231, 76, 60, 0.3);
-            backdrop-filter: blur(20px);
-            font-weight: 500;
-        }
-
-        .success {
-            display: none;
-            background: rgba(46, 204, 113, 0.15);
-            color: white;
-            padding: 16px;
-            border-radius: 14px;
-            margin: 20px 0;
-            border: 1px solid rgba(46, 204, 113, 0.3);
             backdrop-filter: blur(20px);
             font-weight: 500;
         }
@@ -390,17 +352,8 @@
                 <button class="download-btn" id="downloadBtn">Download Video TikTok</button>
             </div>
 
-            <div class="loading" id="loading">
-                <div class="spinner"></div>
-                <div class="loading-text">Memproses video TikTok...</div>
-            </div>
-
             <div class="error" id="error">
                 <div id="errorText"></div>
-            </div>
-
-            <div class="success" id="success">
-                <div id="successText"></div>
             </div>
 
             <div class="result-section" id="resultSection">
@@ -418,31 +371,18 @@
     <script>
         const urlInput = document.getElementById('urlInput');
         const downloadBtn = document.getElementById('downloadBtn');
-        const loading = document.getElementById('loading');
         const error = document.getElementById('error');
         const errorText = document.getElementById('errorText');
-        const success = document.getElementById('success');
-        const successText = document.getElementById('successText');
         const resultSection = document.getElementById('resultSection');
         const downloadLink = document.getElementById('downloadLink');
-
-        let currentVideoData = null;
 
         function showError(message) {
             errorText.textContent = message;
             error.style.display = 'block';
-            success.style.display = 'none';
         }
 
-        function showSuccess(message) {
-            successText.textContent = message;
-            success.style.display = 'block';
+        function hideError() {
             error.style.display = 'none';
-        }
-
-        function hideMessages() {
-            error.style.display = 'none';
-            success.style.display = 'none';
         }
 
         function isValidTikTokURL(url) {
@@ -459,9 +399,8 @@
             
             // Reset UI
             resultSection.style.display = 'none';
-            hideMessages();
-            currentVideoData = null;
-
+            hideError();
+            
             if (!url) {
                 showError('Silakan tempel link TikTok terlebih dahulu');
                 return;
@@ -472,10 +411,9 @@
                 return;
             }
 
-            // Show loading
+            // Langsung proses tanpa loading
             downloadBtn.disabled = true;
             downloadBtn.textContent = 'Memproses...';
-            loading.style.display = 'block';
 
             try {
                 // TIKTOK - PAKAI API LANGSUNG
@@ -485,16 +423,10 @@
                 if (response.ok) {
                     const data = await response.json();
                     if (data.data && data.data.play) {
-                        currentVideoData = {
-                            url: data.data.play,
-                            filename: 'tiktok_video.mp4'
-                        };
-                        
-                        showSuccess('Video TikTok berhasil diproses!');
+                        // Langsung tampilkan hasil
                         resultSection.style.display = 'block';
-                        downloadLink.href = currentVideoData.url;
-                        downloadLink.download = currentVideoData.filename;
-                        
+                        downloadLink.href = data.data.play;
+                        downloadLink.download = 'tiktok_video.mp4';
                     } else {
                         throw new Error('Video TikTok tidak ditemukan');
                     }
@@ -506,10 +438,9 @@
                 console.error(err);
                 showError('Terjadi kesalahan: ' + err.message);
             } finally {
-                // Reset loading state
+                // Reset button state
                 downloadBtn.disabled = false;
                 downloadBtn.textContent = 'Download Video TikTok';
-                loading.style.display = 'none';
             }
         }
 
